@@ -69,6 +69,15 @@
                 'usermod -aG docker ',parameters('vmusername'),'\n',
                 'az aks install-cli\n'
                 ))]"
+        },
+
+        "deploybastion": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "publicIpAddressName": {
+            "type": "string",
+            "defaultValue": "bastionpip"
         }
 
 
@@ -189,7 +198,7 @@
                 },
                 "storageProfile": {
                     "imageReference": "[variables('dsvmimage')]",
-        
+
                     "osDisk": {
                         "name": "[concat(parameters('hostname'),'-osdisk')]",
                         "caching": "ReadWrite",
@@ -205,7 +214,7 @@
                 }
 
             }
-        } ,
+        },
 
 
         {
@@ -263,7 +272,52 @@
                 "description": "Provide contributor access to AKS MSI"
 
             }
+        },
+
+        {
+            "name": "DemoBastion",
+            "type": "Microsoft.Network/bastionHosts",
+            "condition": "[parameters('deploybastion')]",
+            "apiVersion": "2020-04-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "id": "string",
+                        "properties": {
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetname'),'AzureBastionSubnet' )]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', parameters('publicIpAddressName'))]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        },
+                        "name": "ipconfig1"
+                    }
+                ]
+
+            }
+        },
+        {
+            "apiVersion": "2019-02-01",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "condition": "[parameters('deploybastion')]",
+            "name": "[parameters('publicIpAddressName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+
         }
+
+
 
     ],
 
@@ -275,7 +329,7 @@
         "aksname": {
             "type": "string",
             "value": "[parameters('aksClusterName')]"
-    },
+        },
         "aksid": {
             "type": "string",
             "value": "[resourceId('Microsoft.ContainerService/managedClusters', parameters('aksClusterName'))]"

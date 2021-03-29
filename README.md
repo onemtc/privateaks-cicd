@@ -23,18 +23,18 @@ The arm template creates:
 - A VNET with three subnets
   - vmsubnet - for vm deployment
   - akssubnet - for aks deployment
-  - AzureBastionSubnet - used if you deploy Azure Bastion service (not included in this arm template)
+  - AzureBastionSubnet - used if you deploy Azure Bastion service (optionally included in this arm template)
 - A role assignment for the AKS resource granting it contributor access to the akssubnet
 
 ### Deploying the ARM Template
 1. Clone the repo locally and then cd into the ARM folder.
-2. In your favorite editor, edit the defaults in either  `deploy.ps1` (powershell) or  `deploy.sh` (bash). 
+2. In your favorite editor, edit the defaults in either  `deploy.ps1` (powershell) or  `deploy.sh` (bash).    Be sure to review the Azure Bastion setting.
 3. Run either `deploy.ps1` or `deploy.sh` to deploy the resources to Azure.  When this script runs for the first time, it will create an ssh key to be used with the deployment, and will ask for a passphrase.  You can just press 'return' to leave the passphrase blank.  At the end of the script it will create a service principal.   **Be sure to take note of the Service Principal that is created!**
-4. Once the script finishes, you will need to manually create an [Azure Bastion Service](https://docs.microsoft.com/en-us/azure/bastion/tutorial-create-host-portal) and attach it to the VNET that was just created.
-5. Once the Baston Service has been created, use it to ssh into the VM using the `akslabkey` ssh key that was created earlier. NOTE: by default, the username is _azureuser_; this is a parameter in the ARM template if you want to change it.
+5. Use the Bastion Service to ssh into the VM using the `akslabkey` ssh key that was created earlier. NOTE: by default, the username is _azureuser_; this is a parameter in the ARM template if you want to change it.
 6. Install the Self Hosted GitHub Runner agent by following the steps on [this page](https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/adding-self-hosted-runners)
    - Follow the steps to described on the install page add a self-hosted agent to a repository
-   - Addtionally, you must configure the agent to run as a service:  https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/configuring-the-self-hosted-runner-application-as-a-service
+   - Additionally, you must configure the agent to run as a service:  https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners/configuring-the-self-hosted-runner-application-as-a-service
+7. Alternatively, you can install an Azure DevOps build server agent on the VM using these instructions:  https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops&tabs=browser#install
  
 
 ## APP:  Deploy simple app to AKS cluster
