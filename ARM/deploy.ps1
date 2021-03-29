@@ -4,6 +4,7 @@ $RG="privateaks"
 $AKS="aksCluster1"
 $LOCATION="EastUS2"
 $SSHKEYFILE="akslabkey1"
+$DEPLOYBASTION="true"  # change to false if you do not want to deploy Azure Bastion
 
 # create ssh file if it does not already exist
 If (-Not (Test-Path -Path .\$SSHKEYFILE )) { 
@@ -13,7 +14,7 @@ $SSHPUBKEY = Get-Content .\$SSHKEYFILE.pub
 
 az group create --name $RG --location $LOCATION
 az deployment group create --resource-group $RG  -n aksdeploy --template-file azuredeploy.json `
-    --parameters sshpubkey=$SSHPUBKEY
+    --parameters sshpubkey=$SSHPUBKEY deploybastion=$DEPLOYBASTION
 
 $AKSid=$(az aks show -n $AKS -g $RG --output tsv --query id)
 echo "==========================="
