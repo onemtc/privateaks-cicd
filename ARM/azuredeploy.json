@@ -46,7 +46,7 @@
 
         "aksversion": {
             "type": "string",
-            "defaultValue": "1.19.3"
+            "defaultValue": "1.19.7"
         },
         "nodesize": {
             "type": "string",
