@@ -225,7 +225,7 @@
 
             "identity": { "type": "SystemAssigned" },
             "properties": {
-                "kubernetesVersion": "[parameters('aksversion')]",
+
                 "apiServerAccessProfile": { "enablePrivateCluster": true },
                 "dnsPrefix": "[parameters('aksDnsPrefix')]",
                 "networkProfile": {
