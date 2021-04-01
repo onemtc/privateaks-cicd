@@ -44,13 +44,25 @@
             "defaultValue": "aksCluster1"
         },
 
-        "aksversion": {
-            "type": "string",
-            "defaultValue": "1.19.7"
-        },
+
         "nodesize": {
             "type": "string",
-            "defaultValue": "Standard_D2s_v3"
+            "defaultValue": "Standard_DS2_v2"
+        },
+        "osDiskType": {
+            "type": "string",
+            "allowedValues": ["Ephemeral", "Managed"],
+            "defaultValue": "Ephemeral",
+            "metadata": {
+                "description": "Use ephemeral or disk"
+            }
+        },
+        "osDiskSizeGB": {
+            "type": "int",
+            "defaultValue": 80,
+            "metadata": {
+                "description": "Size of OS disk"
+            }
         },
 
 
@@ -244,6 +256,8 @@
                         "vmSize": "[parameters('nodesize')]",
                         "osType": "Linux",
                         "mode": "System",
+                        "osDiskType": "[parameters('osDiskType')]",
+                        "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
                         "vnetSubnetID": "[variables('akssubnetid')]"
                     }
                 ],

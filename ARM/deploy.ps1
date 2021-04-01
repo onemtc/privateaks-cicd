@@ -15,7 +15,7 @@ $SSHPUBKEY = Get-Content .\$SSHKEYFILE.pub
 
 az group create --name $RG --location $LOCATION
 az deployment group create --resource-group $RG  -n aksdeploy --template-file azuredeploy.json `
-    --parameters sshpubkey=$SSHPUBKEY deploybastion=$DEPLOYBASTION
+    --parameters sshpubkey=$SSHPUBKEY deploybastion=$DEPLOYBASTION aksClusterName=$AKS
 
 $AKSid=$(az aks show -n $AKS -g $RG --output tsv --query id)
 echo "==========================="
