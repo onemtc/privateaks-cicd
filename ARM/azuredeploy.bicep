@@ -270,6 +270,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-09-02-previ
   }
 }
 
+/*
 resource roleNameGuid_resource 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: vnet_internal::akssubnet 
   name: guid(aksCluster.id,'Contributor')
@@ -281,6 +282,7 @@ resource roleNameGuid_resource 'Microsoft.Authorization/roleAssignments@2022-04-
     description: 'Provide contributor access to AKS MSI'
   }
 }
+*/
 
 resource DemoBastion 'Microsoft.Network/bastionHosts@2020-04-01' = if (deploybastion) {
   name: 'DemoBastion'

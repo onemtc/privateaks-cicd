@@ -17,7 +17,7 @@ SSHPUBKEY=$(cat "$SSHKEYFILE.pub")
 
 az group create --name $RG --location $LOCATION
 
-az deployment group create --resource-group $RG  -n aksdeploy --template-file azuredeploy.bicep \
+az deployment group create --resource-group $RG  -n aksdeploy1 --template-file azuredeploy.bicep \
     --parameters sshpubkey="$SSHPUBKEY" winpwd="$WINPWD" deploybastion=$DEPLOYBASTION
 
 
@@ -25,7 +25,10 @@ AKSid=$(az aks show -n $AKS -g $RG --output tsv --query id)
 echo "==========================="
 echo ">>>>>  You will need to copy this Service Principal information into a GitHub Secret -- see instructions"
 echo "==========================="
-az ad sp create-for-rbac --sdk-auth --scope $AKSid --output json
+SP=$(az ad sp create-for-rbac --name lnc-privateaks --sdk-auth --role Reader --scopes $AKSid --output json)
+echo $SP |jq
+
+
 
 #####  Set Policy to disallow external IP's on AKS Load Balancers
 ##### See https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/LoadbalancerNoPublicIPs.json
