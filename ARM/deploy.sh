@@ -19,12 +19,12 @@ SSHPUBKEY=$(cat "$SSHKEYFILE.pub")
 
 az group create --name $RG --location $LOCATION
 
-
 # get github token for self-hosted runner registration  https://docs.github.com/en/rest/actions/self-hosted-runners#create-a-registration-token-for-a-repository
 # Note: must be logged into the gh client prior to running this
 # Note: Token is only good for 60 minutes
 REPO=$(echo $GITHUBREPOURL|awk -F'github.com' '{print $2}')
 gh api --method POST   -H "Accept: application/vnd.github+json"  "/repos${REPO}/actions/runners/registration-token"
+
 
 
 az deployment group create --resource-group $RG  -n aksdeploy --template-file azuredeploy.bicep \
@@ -35,7 +35,10 @@ AKSid=$(az aks show -n $AKS -g $RG --output tsv --query id)
 echo "==========================="
 echo ">>>>>  You will need to copy this Service Principal information into a GitHub Secret -- see instructions"
 echo "==========================="
-az ad sp create-for-rbac --sdk-auth --scope $AKSid --output json
+SP=$(az ad sp create-for-rbac --name lnc-privateaks --sdk-auth --role Reader --scopes $AKSid --output json)
+echo $SP |jq
+
+
 
 #####  Set Policy to disallow external IP's on AKS Load Balancers
 ##### See https://github.com/Azure/azure-policy/blob/master/built-in-policies/policyDefinitions/Kubernetes/LoadbalancerNoPublicIPs.json
