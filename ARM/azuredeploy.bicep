@@ -10,6 +10,10 @@ param usersubnetname string = 'usersubnet'
 param aksClusterName string = 'aksCluster1'
 param nodesize string = 'Standard_DS2_v2'
 
+param githubrepourl string
+@secure()
+param ghtoken string
+
 @description('Use ephemeral or disk')
 @allowed([
   'Ephemeral'
@@ -23,12 +27,19 @@ param vmsize string = 'Standard_D2s_v3'
 param vmusername string = 'azureuser'
 @secure()
 param winpwd string 
-param vmCustomData string = base64(join([
-  '#!/bin/bash'
-  'usermod -aG docker ${vmusername}'
-  'az aks install-cli'
-  '\n'
-],'\n'))
+param vmCustomData string = base64(format(join([
+    '#!/bin/bash'
+    'usermod -aG docker ${vmusername}'
+    'az aks install-cli'
+    'mkdir /usr/local/ghagent && cd /usr/local/ghagent'
+    'curl -o actions-runner.tar.gz -L https://github.com/actions/runner/releases/download/v2.299.1/actions-runner-linux-x64-2.299.1.tar.gz'
+    'tar xzf ./actions-runner.tar.gz'
+    './config.sh --url {0} --token {1} --unattended'
+    './svc.sh install'
+    './svc.sh start'
+    '\n'
+],'\n'),githubrepourl,ghtoken)
+)
 
 param deploybastion bool = false
 param publicIpAddressName string = 'bastionpip'
