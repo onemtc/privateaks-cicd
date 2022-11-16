@@ -27,6 +27,7 @@ param vmCustomData string = base64(join([
   '#!/bin/bash'
   'usermod -aG docker ${vmusername}'
   'az aks install-cli'
+  '\n'
 ],'\n'))
 
 param deploybastion bool = false
@@ -270,17 +271,17 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-09-02-previ
   }
 }
 
-resource roleNameGuid_resource 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  scope: vnet_internal::akssubnet 
-  name: guid(aksCluster.id,'Contributor')
+// resource roleNameGuid_resource 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   scope: vnet_internal::akssubnet 
+//   name: guid(aksCluster.id,'Contributor')
 
-  properties: {
-    roleDefinitionId: 'Contributor'
-    //principalId: reference(aksCluster.id, '2020-09-01', 'Full').identity.principalId
-    principalId: aksCluster.identity.principalId
-    description: 'Provide contributor access to AKS MSI'
-  }
-}
+//   properties: {
+//     roleDefinitionId: 'Contributor'
+//     //principalId: reference(aksCluster.id, '2020-09-01', 'Full').identity.principalId
+//     principalId: aksCluster.identity.principalId
+//     description: 'Provide contributor access to AKS MSI'
+//   }
+// }
 
 resource DemoBastion 'Microsoft.Network/bastionHosts@2020-04-01' = if (deploybastion) {
   name: 'DemoBastion'
