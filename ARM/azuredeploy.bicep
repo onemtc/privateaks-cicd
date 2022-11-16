@@ -294,6 +294,7 @@ resource roleNameGuid_resource 'Microsoft.Authorization/roleAssignments@2022-04-
     description: 'Provide contributor access to AKS MSI'
   }
 }
+*/
 
 resource DemoBastion 'Microsoft.Network/bastionHosts@2020-04-01' = if (deploybastion) {
   name: 'DemoBastion'
